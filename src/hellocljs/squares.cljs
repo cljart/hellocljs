@@ -75,18 +75,36 @@
 (defn rand-color []
   (rand-nth ["blue" "red" "green" "yellow" "magenta" "cyan" "brown"]))
 
+(defn coords->square [x y]
+  (let [col (quot x 50)
+        row (quot y 50)]
+    (sel (str "#square-" row "-" col))))
+
 (defn set-random-background-color [event]
-  (set-styles! (target event) {:background-color (rand-color)}))
+  (let [x (.-pageX event)
+        y (.-pageY event)
+        square (coords->square x y)]
+    (set-styles! square {:background-color (rand-color)})))
+
+(defn set-random-background-color-touch [event]
+  (let [touchlist (.-changedTouches event)
+        touch (.item touchlist (- (.-length touchlist) 1))]
+    (set-random-background-color touch)))
 
 (defn make-squares
   "Use domina to create a 1000 squares, and add an event handler to
   change the color on mouseover"
   []
-  (dotimes [_ 1000]
-    (append! (sel "body") "<div class='square'></div>"))
-
-  ;; Set up a "mouseover" event handler on each square
-  ;; when the event handler fires, we change the color of the square
-  (listen! (sel ".square") :mouseover set-random-background-color))
+  (dotimes [row 100]
+    (append! (sel "body") (str "<div class='row' id='row-" row "'></div>"))
+    (dotimes [col 100]
+      (append! (sel (str "#row-" row)) (str "<div class='square' id='square-" row "-" col "'></div>")))))
 
 (make-squares)
+
+(.addEventListener js/window "mousemove" #(set-random-background-color %))
+(.addEventListener js/window "touchmove" #(set-random-background-color-touch %))
+
+
+;; berlinberlin
+;; 192.168.2.90:8888
