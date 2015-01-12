@@ -16,7 +16,7 @@
 
 (hum/note-on output vco 440)
 
-;; (.addEventListener js/window "mousemove" #(mouse-handler %))
+(.addEventListener js/window "mousemove" #(mouse-handler %))
 (.addEventListener js/window "deviceorientation" #(motion-handler %))
 (.addEventListener js/window "touchmove" #(touch-handler %))
 
